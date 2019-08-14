@@ -21,6 +21,8 @@ import java.util.List;
 public class GuestController {
 
     private final GuestService guestService;
+    private final String GUEST_VIEW_PAGE = "guest-view";
+    private final String GUEST_PAGE = "guest";
 
     public GuestController(GuestService guestService){
         super();
@@ -42,13 +44,13 @@ public class GuestController {
 
     @GetMapping(value="/guests/add")
     public String getAddGuestForm(Model model){
-        return "guest-view";
+        return GUEST_VIEW_PAGE;
     }
 
     @PostMapping(value="/guests")
     public ModelAndView addGuest(HttpServletRequest request, Model model, @ModelAttribute GuestModel guestModel){
         Guest guest = this.guestService.addGuest(guestModel);
-        model.addAttribute("guest", guest);
+        model.addAttribute(GUEST_PAGE, guest);
         request.setAttribute(View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
         return new ModelAndView("redirect:/guests/" + guest.getId());
     }
@@ -56,15 +58,15 @@ public class GuestController {
     @GetMapping(value="/guests/{id}")
     public String getGuest(Model model, @PathVariable long id){
         Guest guest = this.guestService.getGuest(id);
-        model.addAttribute("guest", guest);
-        return "guest-view";
+        model.addAttribute(GUEST_PAGE, guest);
+        return GUEST_VIEW_PAGE;
     }
 
     @PostMapping(value="/guests/{id}")
     public String updateGuest(Model model, @PathVariable long id, @ModelAttribute GuestModel guestModel){
         Guest guest = this.guestService.updateGuest(id, guestModel);
-        model.addAttribute("guest", guest);
+        model.addAttribute(GUEST_PAGE, guest);
         model.addAttribute("guestModel", new GuestModel());
-        return "guest-view";
+        return GUEST_VIEW_PAGE;
     }
 }

@@ -6,15 +6,19 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ApplicationUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final AuthGroupRepository authGroupRepository;
 
     @Autowired
-    public ApplicationUserDetailsService(UserRepository userRepository) {
+    public ApplicationUserDetailsService(UserRepository userRepository, AuthGroupRepository authGroupRepository) {
         super();
         this.userRepository = userRepository;
+        this.authGroupRepository = authGroupRepository;
     }
 
     @Override
@@ -23,6 +27,7 @@ public class ApplicationUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User with name " + username + " not found");
         }
-        return new ApplicationUserPrinciple(user);
+        List<AuthGroup> authGroups = this.authGroupRepository.findByUsername(username);
+        return new ApplicationUserPrinciple(user, authGroups);
     }
 }
